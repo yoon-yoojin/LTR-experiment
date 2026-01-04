@@ -1,0 +1,53 @@
+data:
+  raw_data_path: "data/raw"
+  processed_data_path: "data/processed"
+  train_file: "train.txt"
+  val_file: "val.txt"
+  test_file: "test.txt"
+  num_features: 136  # MSLR-WEB10K default
+  fold: 1
+
+model:
+  pairwise:
+    name: "ranknet"  # ranknet, lambdarank
+    hidden_dims: [256, 128, 64]
+    dropout: 0.2
+    activation: "relu"
+
+  listwise:
+    name: "listnet"  # listnet, listmle
+    hidden_dims: [256, 128, 64]
+    dropout: 0.2
+    activation: "relu"
+
+training:
+  batch_size: 32
+  num_epochs: 50
+  learning_rate: 0.001
+  weight_decay: 0.0001
+  early_stopping_patience: 10
+  gradient_clip: 5.0
+  optimizer: "adam"
+  scheduler: "cosine"
+
+  # Pairwise specific
+  num_pairs_per_query: 10
+
+  # Listwise specific
+  list_size: 10
+
+evaluation:
+  metrics: ["ndcg@1", "ndcg@3", "ndcg@5", "ndcg@10", "map", "mrr"]
+  k_values: [1, 3, 5, 10]
+
+logging:
+  checkpoint_dir: "checkpoints"
+  log_dir: "logs"
+  result_dir: "results"
+  save_frequency: 5
+  tensorboard: true
+
+inference:
+  model_path: "checkpoints/best_model.pt"
+  batch_size: 64
+  output_dir: "results/predictions"
